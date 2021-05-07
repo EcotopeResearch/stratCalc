@@ -13,6 +13,7 @@ import numpy as np
 from plotly import subplots
 from plotly import graph_objs as go
 import plotly.express as px
+import matplotlib.pyplot as plt
 
 
 # =============================================================================
@@ -29,6 +30,15 @@ keep.extend(TcSto)
 
 df = df[keep]
 
+
+plt.figure()
+plt.scatter(df["Minutes"], df['CFMPStoOut'], c="b")
+plt.scatter(df["Minutes"], df['CHP12In'], c="b")
+plt.show()
+
+# =============================================================================
+# Slider plots
+# =============================================================================
 minute = 950
 def plot_contour_frame(minute):
     dat = np.array([df.iloc[minute, 3:15],df.iloc[minute, 3:15]]).T
@@ -49,8 +59,6 @@ def plot_contour_frame(minute):
     fig.update_xaxes(tickvals=[])
     
     fig.show()
-    
-    
 
 # Create figure
 fig = go.Figure()
