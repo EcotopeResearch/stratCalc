@@ -180,7 +180,7 @@ fig.add_scatter( x=[0,step*spaceFactor], # horizontal axis
             name="Minute = " + str(step), mode='lines',
             #dash = "dash", 
             line = dict(color = "black"))
-fig.write_html("output.html")
+fig.write_html("ScatterPlotForEachStep_zoomin.html")
 
 
 # =============================================================================
