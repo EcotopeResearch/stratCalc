@@ -370,7 +370,7 @@ def SetColorTemp(x):
     elif( x < 110):
         return "blue"
 
-spaceFactor = 4
+spaceFactor = 1
 fig = go.Figure()
 # Add traces, one for each slider step
 for step in np.arange(60, 1440, spaceFactor):
@@ -388,6 +388,7 @@ for step in np.arange(60, 1440, spaceFactor):
             )
 # add the fit
 xline = np.linspace(62, 145, 100)
+yline =  np.linspace(-.5, 1, 100)
 fig.add_scatter( x=genLogistic(yline, *poptlog), y=yline, mode="lines",
                 name = "Best fit logistic", 
                 line = dict(color="black", 
