@@ -73,7 +73,11 @@ vfill = "VFillVol0edFract"
 
 # =============================================================================
 # #### Import data
+# # This data should be used in the Storage System Object
 # =============================================================================
+
+# define timeseries for tanks sensors.
+# separate object operates with tank object
 df = pd.read_csv('H200925_CRT150A10_50W8M_2GPM_DMV_UUT3,A5D3.csv')
 
 #Normal all 12
@@ -386,13 +390,16 @@ for step in np.arange(60, 1440, spaceFactor):
             #marker  = dict(color=list(map(SetColorTemp, dat)))
             marker = dict(color=get_continuous_color(step/1440))
             )
+
 # add the fit
-xline = np.linspace(62, 145, 100)
-fig.add_scatter( x=genLogistic(yline, *poptlog), y=yline, mode="lines",
-                name = "Best fit logistic", 
-                line = dict(color="black", 
-                           # dash='dash',
-                            width=4))        
+# =============================================================================
+# xline = np.linspace(62, 145, 100)
+# fig.add_scatter(x=genLogistic(yline, *poptlog), y=yline, mode="lines",
+#                 name = "Best fit logistic", 
+#                 line = dict(color="black", 
+#                            # dash='dash',
+#                             width=4))        
+# =============================================================================
 fig.update_layout(
     showlegend=False,
    # title="Plot Title",
