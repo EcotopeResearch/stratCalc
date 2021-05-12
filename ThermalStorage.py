@@ -57,9 +57,3 @@ class ThermalStorage:
         def calc_ua():                  # calculate UA of storage system
             return None
         
-        
-        
-        
-        
-        
-        
