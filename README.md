@@ -12,3 +12,10 @@ The primary storage tank temperatures are in the columns: TcSto1Tank[XX], the sw
 Flow out of the primary unit to the swing tank are in column: CFMPStoOut
 
 Flow in and out of both heat pumps are in column: CHP12In
+
+Tank informations / assumptions
+  - 119 gal
+  - 12 temps evenly spread along cyclinder
+  - diameter 28.25
+  - height 59.25
+  - assume 4" heads 51.25" / for first and last. 3.625", +4 , by 12
