@@ -45,8 +45,8 @@ avg_data = df.transpose()
 
 ## create boolean array for if timestep contains value
 # find min and max
-mn = np.amin(avg_data[1:10,:],axis=0)
-mx = np.amax(avg_data[1:10,:],axis=0)
+mn = np.amin(avg_data,axis=0)
+mx = np.amax(avg_data,axis=0)
 # determine if temp value falls withing data
 tf = np.all([mn<value, mx>value],axis=0)
 
@@ -56,9 +56,8 @@ idx = np.where(tf!=False)[0]
 # split into arrays that each contain value
 arrs = np.split(avg_data[:,idx],np.where(np.diff(idx)!=1)[0]+1, axis=1)
 
-a1 = arrs[1].flatten()
-a2 = np.gradient(arrs[1], axis=0).flatten()
-a = np.array([a1,a2])
+a1 = arrs[0][:,:]
+a2 = np.gradient(arrs[0][:,:], axis=0)
 
 plt.scatter(a1,a2)
 plt.show
@@ -76,6 +75,19 @@ nodeWeights[-1] -= topBottom_factor/2.
 nodeWeights[1:-1] += topBottom_factor/10.
 if sum(nodeWeights) != 1: Exception("nodeWeights doesn't sum to 1.")
 volFract = nodeWeights.cumsum()#The top is 1... should there be an offset to bin centers?
+volFract = [0.1332227326847979,
+ 0.19556037100319193,
+ 0.25789800932158596,
+ 0.32023564763997997,
+ 0.38257328595837403,
+ 0.4449109242767681,
+ 0.507248562595162,
+ 0.5695862009135562,
+ 0.6319238392319501,
+ 0.6942614775503441,
+ 0.7565991158687382,
+ 0.8189367541871321]
+
 
 # slope - fract of tank per degree
 slope = -nodeWeights[3]/30

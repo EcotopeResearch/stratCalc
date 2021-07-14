@@ -7,13 +7,12 @@ Created on Wed Jul  7 11:54:21 2021
 
 import numpy as np
 
-from ThermalStorage import ThermalStorage
 from StorageTank import StorageTank
 
 st1_temps=['bottom', 3.375,15.375,27.375,38.625,50.625,62.625, 'top']
 
 st1 = StorageTank(tankVol=257, tankDia=30, tankHieght=66, tankWallThick=0.1875, sensLoc=st1_temps)
-st1.calc_tankSensors()
+st1.calc_sens()
 
 st2 = st1
 st3 = st1
@@ -45,7 +44,4 @@ for i in range(0,len(tanks)):
 st4_temps = np.linspace(2, 45, 12).tolist()
 
 st4 = StorageTank(tankVol=119, tankDia=24, tankHieght=50, tankWallThick=0.1875, sensLoc=st4_temps)
-st4.calc_tankSensors()
-
-
-st = ThermalStorage(site='Bayview', tanks=tanks,config='parallel',measData=[])
+st4.calc_sens()

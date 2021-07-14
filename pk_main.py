@@ -93,6 +93,36 @@ keep.extend(TcSto)
 df = df[keep]
 
 '''
+test dropping values
+'''
+value = 105
+
+d = df[TcSto]
+
+# finding the average from each tank sensor
+#avg_data = np.average(df[:,:,:],axis=0)
+avg_data = d.transpose()
+
+## Now is where function would start
+
+## create boolean array for if timestep contains value
+# find min and max
+mn = np.amin(avg_data,axis=0)
+mx = np.amax(avg_data,axis=0)
+# determine if temp value falls withing data
+tf = np.all([mn<value, mx>value],axis=0)
+
+## split array into list of arrays that contain value
+# index where value exists
+idx = np.where(tf!=False)[0]
+
+for i in range(0,len(df)):
+    if tf[i] == False:
+        df = df.drop(i)
+
+
+
+'''
 No smoothing data with hourly
 '''
 
@@ -108,6 +138,20 @@ nodeWeights[1:-1] += topBottom_factor/10.
 if sum(nodeWeights) != 1: Exception("nodeWeights doesn't sum to 1.")
 
 sensorVolFractHeights = nodeWeights.cumsum()#The top is 1... should there be an offset to bin centers?
+sensorVolFractHeights = [0.1332227326847979,
+ 0.19556037100319193,
+ 0.25789800932158596,
+ 0.32023564763997997,
+ 0.38257328595837403,
+ 0.4449109242767681,
+ 0.507248562595162,
+ 0.5695862009135562,
+ 0.6319238392319501,
+ 0.6942614775503441,
+ 0.7565991158687382,
+ 0.8189367541871321]
+
+
 
 # =============================================================================
 # Functions
@@ -331,7 +375,7 @@ if False:
     # Create figure
     fig = go.Figure()
     # Add traces, one for each slider step
-    for step in np.arange(00, 1440, 4):
+    for step in np.arange(00, len(df), 4):
         datum = df[vfill].iloc[step]
         dat = np.array(df[TcSto].iloc[step])
         dat = np.flipud(dat)
@@ -387,7 +431,7 @@ def SetColorTemp(x):
 spaceFactor = 4
 fig = go.Figure()
 # Add traces, one for each slider step
-for step in np.arange(60, 1440, spaceFactor):
+for step in np.arange(60, len(df), spaceFactor):
     datum = df[vfill].iloc[step]
     dat = np.array(df[TcSto].iloc[step])
     dat = np.flipud(dat)
@@ -398,7 +442,7 @@ for step in np.arange(60, 1440, spaceFactor):
             #reversescale = True,
             # line = dict(color = "red")
             #marker  = dict(color=list(map(SetColorTemp, dat)))
-            marker = dict(color=get_continuous_color(step/1440))
+            marker = dict(color=get_continuous_color(step/len(df)))
             )
 
 # add the fit
