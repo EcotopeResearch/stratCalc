@@ -27,84 +27,42 @@ Funding Sources
 
 '''
 
-
-
-import numpy as np
-
 class ThermalStorage:
-    def __init__(self, site, tankConfig, sysConfig, tankVol, tankDia, tankHieght, numTanks, tankWallThick, sensLoc, measData):
+    def __init__(self, site, tanks, config,  measData):
 
         ''' Initial Attributes'''
 
-        self.site = site                # string - location of storage system
-        self.tankConfig = tankConfig    # string - configuration of storage system - series, parallel, single_tank
-        self.sysConfig = sysConfig      # string - system configuration - temp_main_tank, return_primary
-        
-        # could be wrapped into tank object. 
-        self.tankVol = tankVol                # float - volume of single tank in storage system, gallons
-        self.tankDia = tankDia                # float - outer diameter of single tank in storage system, inches
-        self.tankHieght = tankHieght             # float - height of cyclindrical portion of tank in storage system, inches
-        self.tankWallThick = tankWallThick          # float - thickness of tank wall, inches
-        
-        self.numTanks = numTanks               # integer - number of tanks in storage system
-        
-        self.sensLoc = sensLoc          # array - sensor locations within cyclindrical portion of storage tank, [sensor, inches]
-        
+        self.site = site                # string - location of storage system       
+        self.tanks = tanks              # list of StorageTank objects
+        self.config = config            # series, parallel, or single tank
         self.measData = measData        # M&V or lab test data in specified format:
                                             # seconds, in_CW_temp, out_CW_temp, in_HW_temp, out_HW_temp,
                                             # flow_heat_pumps, flow_city_water
                                             # temperature sensor values - number depends on sensors.
                                             # exterior air temperature
 
-        ''' Calculated Attributes'''
-        
-        self.sensVol = {}
-        self.sensWeight = {}
+        self.volume = sum(x.tankVol for x in self.tanks)
+        self.sensLoc = []
 
-
-        ''' Methods '''
-
-    def calc_tankSensors(self):
+    def calc_sens:(self):
         
-        '''
-        Function to calculate volume to each temperature sensor. Store as dictionary [sensor, gals]
+        tanks = self.tanks
         
-        This is more of a tank attribute than a TES attribute. 
-        '''
+        # starting variables
+        tanks_vol = 0
+        sys_vol = []
         
-        # define dictionary for results
-        sv = {}
-        sw = {}
-        
-        # variables
-        V = self.tankVol
-        d = self.tankDia
-        h = self.tankHieght
-        t = self.tankWallThick
-        
-        sl = self.sensLoc
-        
-        # calculate volumes
-        r = d/2-t                     # internal radius
-        V_cyc = (h*np.pi*r**2)/231      # gals cyclinder
-        V_head = (V-V_cyc)/2            # vol head
-        V_perInch = V_cyc/h             # vol per inch cyc
-        
-        for key in sl:
+        for i in range(0,len(tanks)):
             
-            if sl[key] == 'bottom':
-                sv[key] = 0
-            elif sl[key] == 'top':
-                sv[key] = V
-            else:
-                sv[key] = V_head + V_perInch*sl[key]
+            for j in range(0,len(tanks[i].sensVol)): 
+               sys_vol.append(tanks[i].sensVol[j] + tanks_vol) 
+           
+            tanks_vol = tanks_vol+tanks[i].tankVol
+
         
-        for key in sv:
-            sw[key] = sv[key]/V
-        
-        
-        self.sensVol = sv
-        self.sensWeight = sw
+        self.sensVol = sys_vol
+        self.sensVol = 
+
 
     def calc_initVfill():           # calculate initial Vfill, option to specify time slice.
         # this function does not calculate an attribute but is used in strat and Vfill functions.
