@@ -81,17 +81,17 @@ class ThermalStorageData:
         clBoolArr = self.clBoolArr
         method = self.method
         
-        if method == 'temp2' or 'position':
+        if method=='temp2' or method=='position':
             ## split array into list of arrays that contain value
             # index where value exists
             idx = np.where(clBoolArr!=False)[0]
             # split into arrays that each contain value
             self.clTempArrs=np.split(tempArr[:,idx],np.where(np.diff(idx)!=1)[0]+1, axis=1)
-        elif method == 'temp 1':
+        elif method=='temp1':
             # delete rows that do not include value = v
             self.clTempArrs=[np.delete(tempArr, np.invert(clBoolArr), axis=1)]
         else:
-            print('Please provide a method input of temp1, temp2, or position')
+            raise 'Please provide a method input of temp1, temp2, or position'
             
     def calc_slope(self):
         '''
@@ -141,27 +141,45 @@ class ThermalStorageData:
         clTempArrs = self.clTempArrs
         volFract = self.volFract
         midVal = self.midVal
-        midLinTol = self.midLinTol
+        method = self.method
+        avgSlps = self.avgSlps
         
+        posArrs = []
         
-            ## CALCULATE DATUM AS FRACTION OF TANK VOLUME
-            # create indices for d0(row) and d1(column) to feed into array
-            idx_d0 = np.abs(temps_arr-mid_value).argmin(axis=0) # index row with temperatures closest to value = v
-            idx_d1 = np.arange(0,len(idx_d0)) # create index for each colum
+        for i in range(0,len(clTempArrs)):
             
-            temps_idx = temps_arr[[idx_d0],[idx_d1]] # array of temperatures at each step closest to value (v)
-            temps_diff = ((mid_value-temps_idx)*slope_grad)[0][:] # calculate volume offset based on average slope.
+            if method=='temp1' or method=='temp2':
+                
+                arr = clTempArrs[i]
+                slp = avgSlps[i]
+                
+                ## CALCULATE DATUM AS FRACTION OF TANK VOLUME
+                # create indices for d0(row) and d1(column) to feed into array
+                idx_d0 = np.abs(arr-midVal).argmin(axis=0) # index row with temperatures closest to value = v
+                idx_d1 = np.arange(0,len(idx_d0)) # create index for each colum
+                
+                temps_idx = arr[[idx_d0],[idx_d1]] # array of temperatures at each step closest to value (v)
+                temps_diff = ((midVal-temps_idx)*slp)[0][:] # calculate volume offset based on average slope.
+                
+                # loop through idx_d0 (contains indices for temp sensor closet to value (v))
+                # pull volFract at that temperature sensor.
+                # add the difference calculated by temperature offset from value and average slope.
+                datumArr = 1-(np.array([volFract[x] for x in idx_d0])+temps_diff)
+                
+                ## CREATE POSITION ARRAY, WHERE IS EACH TEMP SENSOR RELATIVE TO THE DATUM
+                # flip vol fract array so that highest fraction lines up with temp.
+                # reshape for matrix math to make 12x1
+                # multiply by 1xn array to create array where datum is always at tank bottom.
+                # subtract datum array so that v 
+                posArrs.append(np.flip(np.array(volFract)).reshape(12,1)*np.ones((1,len(datumArr)))-datumArr)
+                
+            elif method=='position':
+                
+                raise 'position method not yet coded'
             
-            # loop through idx_d0 (contains indices for temp sensor closet to value (v))
-            # pull volFract at that temperature sensor.
-            # add the difference calculated by temperature offset from value and average slope.
-            datumArr = 1-(np.array([volFract[x] for x in idx_d0])+temps_diff)
+            else:
+                
+                raise 'Please provide a method input of temp1, temp2, or position'
             
-            ## CREATE POSITION ARRAY, WHERE IS EACH TEMP SENSOR RELATIVE TO THE DATUM
-            # flip vol fract array so that highest fraction lines up with temp.
-            # reshape for matrix math to make 12x1
-            # multiply by 1xn array to create array where datum is always at tank bottom.
-            # subtract datum array so that v 
-            posArr = np.flip(np.array(volFract)).reshape(12,1)*np.ones((1,len(datumArr)))-datumArr
+        self.clPosArrs=posArrs
         
-        return None

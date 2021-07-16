@@ -5,7 +5,6 @@ Created on Wed Jul  7 11:54:21 2021
 @author: scott
 """
 
-import numpy as np
 from ThermalStorageData import ThermalStorageData
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -45,6 +44,8 @@ flowArr = df[flow].transpose()
 volFract = pgeVolFract
 
 
-pgeData = ThermalStorageData(tempsArr, flowArr, volFract, midVal, midLinTol, 'temp1')
+pgeData = ThermalStorageData(tempsArr, flowArr, volFract, midVal, midLinTol, 'temp2')
 
-
+plt.plot(pgeData.clTempArrs[1], pgeData.clPosArrs[1])
+plt.show()
+plt.savefig('fig.png')
