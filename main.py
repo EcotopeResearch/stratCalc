@@ -204,10 +204,17 @@ d1 = np.abs(temps_idx-mid_value).argmin()
 d0 = np.abs(temps_arr[:,d1][:]-mid_value).argmin()
 
 
-x0 = np.flip(np.array(pgeVolFract)).reshape((len(volFract),1))*np.ones((1,temps_arr.shape[1]))
+x0 = np.flip(np.array(pgeVolFract)).reshape((len(pgeVolFract),1))*np.ones((1,temps_arr.shape[1]))
 pos_grd = np.gradient(x0,axis=0)
 
 slp = np.average(pos_grd[both]/grd[both])
 
 
+init_val = x0[d0,d1]
+closest_temp = temps_arr[d0,d1]
+diff = init_val-(mid_value-closest_temp)*slp # subtract datum array to get starting array
 
+
+
+
+add = np.ones(x0.shape)*-diff+flowArr
